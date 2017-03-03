@@ -1,0 +1,111 @@
+<!DOCTYPE hmtl>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>YOUR COOKBOOK</title>
+	<link rel="stylesheet" href="https://bootswatch.com/lumen/bootstrap.min.css">
+	<link rel="stylesheet" href="{{ url_for('static', filename='custom.css' ) }}">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script>
+        $(document).ready(function(){
+            $('div.row').fadeIn('slow');
+            $('[data-toggle="tooltip"]').tooltip();
+            $('div.delete-button').click(function(){
+                $(this).children().slideDown('slow');
+            });
+            $('button.cancel').click(function(){
+                $(this).parent().slideUp('slow');
+                return false;
+            });
+        });
+    </script>
+</head>
+<body data-spy="scroll" data-target=".navbar" data-offset="50">
+
+<div class="container-fluid header">
+    <img class="img-header" src="/static/logo/header.png" alt="YOUR COOKBOOK">
+</div>
+
+<nav class="navbar navbar-inverse" data-spy="affix" data-offset-top="157">
+  <div class="container-fluid">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>                        
+      </button>
+      <a class="navbar-brand" href="{{url_for('render_index')}}">YOUR COOKBOOK</a>
+    </div>
+    <div>
+      <div class="collapse navbar-collapse" id="myNavbar">
+        <ul class="nav navbar-nav">
+          <li class="dropdown" style="background-color: #FFDA33"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Your Recipes <span class="caret"></span></a>
+            <ul class="dropdown-menu">
+                <li><a href="{{url_for('render_index')}}">All recipes</a></li>
+                <li><a href="{{url_for('render_starter')}}">Starter/Soup</a></li>
+                <li><a href="{{url_for('render_main_course')}}">Main course</a></li>
+                <li><a href="{{url_for('render_dessert')}}">Dessert</a></li>
+            </ul>
+          </li>
+          <li><a href="{{url_for('render_new_recipe')}}">Create New Recipe</a></li>
+        </ul>
+        <form class="navbar-form navbar-left" action="{{url_for('render_search')}}" method='POST'>
+            <div class="form-group">
+                <input type="text" name="search" class="form-control" placeholder="Search recipes">
+            </div>
+            <button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-search"></span> Search</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</nav>    
+
+<div id="section1" class="container-fluid">
+  {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <div class="alert alert-success alert-dismissable fade in flash-message">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                    {% for message in messages %}
+                        <strong>{{ message }}</strong>
+                    {% endfor %}		
+        </div>
+        {% endif %}
+    {% endwith %}
+    <div class="row" >
+        {% for recipe in recipes %}
+        <div class="col-md-3 col-sm-4" >
+            <div class="col-sm-12 box">
+                <div class="delete-button">
+                    <button type="button" class="close" style="color:red">
+                        <span>&times;</span>
+                    </button>
+                    <div class="confirm">
+                        <button class="btn btn-sm btn-default cancel">Cancel</button> 
+                        <a href="/delete/{{recipe.id}}" class="btn btn-sm btn-danger">Delete</a>
+                    </div>
+                </div>
+                <div class="box-header">
+                    <h3>{{recipe.name}}</h3>
+                </div>
+                <div class="box-body" data-toggle="tooltip" title="Click the image for the recipe!" >
+                    <a href="/show_recipe/{{recipe.id}}"><img src="/static/img/{{recipe.image}}" class="box-img img-rounded" alt="Food"></a>
+                </div>
+                <div class="box-footer">
+					<a href="/recipe/{{recipe.id}}" class="btn btn-info btn-sm">Edit recipe</a>
+				</div>
+            </div>
+        </div>
+        
+        {% else %}
+        <div class="no-recipe alert alert-info">
+            <h2>You don't have any recipe here, <a href="{{url_for('render_new_recipe')}}">CLICK HERE</a> create a new one!</h1>
+        </div>
+        {% endfor %}
+    </div>
+
+</div>
+</body>
+</html>
